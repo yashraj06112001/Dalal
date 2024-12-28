@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "jsx": "react-jsx", // Use "react" if you are on React 16 or below
+      "target": "ES6",
+      "module": "ESNext",
+      "moduleResolution": "Node",
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "strict": true,
+      "baseUrl": "./",
+      "paths": {
+        "@src/*": ["src/*"]
+      }
+    },
+    "include": ["src"],
+    "exclude": ["node_modules"]
+  }
+  
