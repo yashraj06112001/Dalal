@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import React from "react";
 import "@src/components/login/style.css";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   type formLogin = {
@@ -15,7 +16,22 @@ const Login = () => {
   } = useForm<formLogin>();
 
   const onSubmit = (data: formLogin) => {
+    const currentDateTime = new Date().toISOString();
     console.log(data);
+    fetch("http://localhost:8000/api/login", {
+      method: "POST",
+      body: JSON.stringify({
+        customerId: loginWatch("customerId"),
+        password: loginWatch("password"),
+        dateTime: currentDateTime,
+      }),
+    }).then((response) => {
+      if (response?.status === 201) {
+        console.log("Hi your login has been done");
+      } else {
+        console.log("login Not working");
+      }
+    });
   };
   return (
     <>
