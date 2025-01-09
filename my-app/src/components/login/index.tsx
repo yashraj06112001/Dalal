@@ -20,18 +20,25 @@ const Login = () => {
     console.log(data);
     fetch("http://localhost:8000/api/login", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Specify JSON data type
+      },
       body: JSON.stringify({
-        customerId: loginWatch("customerId"),
-        password: loginWatch("password"),
-        dateTime: currentDateTime,
+        customerId: data.customerId,
+        password: data.password,
+        dateAndTime: currentDateTime,
       }),
-    }).then((response) => {
-      if (response?.status === 201) {
-        console.log("Hi your login has been done");
-      } else {
-        console.log("login Not working");
-      }
-    });
+    })
+      .then((response) => {
+        if (response?.status === 201) {
+          console.log("Hi your login has been done");
+        } else {
+          console.log("login Not working");
+        }
+      })
+      .catch((error) => {
+        console.error("error in onSubmit:", error);
+      });
   };
   return (
     <>
