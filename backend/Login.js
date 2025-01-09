@@ -3,13 +3,26 @@ const app = express();
 const bodyParser = require("body-parser");
 const router = express.Router();
 const connection = require("./databse");
-
-app.use(bodyParser.json());
+const bycrypt = require("bycrypt");
 
 const loginRecord = router.post("/login", async (req, res) => {
   const { customerId, password, dateAndTime } = req.body;
-  console.log("the request we are getting is - ", req);
-  console.log(customerId, password, dateAndTime);
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const sqlQuery = `INSERT INTO login (customerId, Password, dateAndTime) VALUES (?, ?, ?)`;
+  connection.query(
+    sqlQuery,
+    [customerId, hashedPassword, dateAndTime],
+    (error, results) => {
+      if (error) {
+        console.error("Error inserting data:", error);
+        return res.status(500).json({ message: "Database error" });
+      }
+      res.status(201).json({
+        message: "Login record inserted successfully",
+        recordId: results.insertId,
+      });
+    }
+  );
 });
 
 module.exports = {

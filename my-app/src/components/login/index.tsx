@@ -33,8 +33,16 @@ const Login = () => {
         if (response?.status === 201) {
           console.log("Hi your login has been done");
         } else {
-          console.log("login Not working");
+          return response.json();
         }
+      })
+      .then((data) => {
+        console.log(
+          "login Not working",
+          data?.status,
+          "and the whole response is - ",
+          data
+        );
       })
       .catch((error) => {
         console.error("error in onSubmit:", error);
