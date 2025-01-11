@@ -1,17 +1,16 @@
 const express = require("express");
-const app = express();
-const bodyParser = require("body-parser");
 const router = express.Router();
 const connection = require("./databse");
-const bycrypt = require("bycrypt");
+const bcrypt = require("bcrypt");
 
 const loginRecord = router.post("/login", async (req, res) => {
   try {
     const { customerId, password, dateAndTime } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const sqlQuery = `INSERT INTO login (customerId, Password, dateAndTime) VALUES (?, ?, ?)`;
+    const sqlQuery1 = `INSERT INTO login (customerId, Password, dataAndTime) VALUES (?, ?, ?)`;
+    //INSERTED DATA IN ONE COLUMN CONSIST OF ALL TRIALS OF LOGIN
     connection.query(
-      sqlQuery,
+      sqlQuery1,
       [customerId, hashedPassword, dateAndTime],
       (error, results) => {
         if (error) {
@@ -25,7 +24,7 @@ const loginRecord = router.post("/login", async (req, res) => {
       }
     );
   } catch (err) {
-    console.log("we are facing error in login the values");
+    console.log("we are facing error in login the values", err);
   }
 });
 

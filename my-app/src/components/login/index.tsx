@@ -33,6 +33,7 @@ const Login = () => {
         if (response?.status === 201) {
           console.log("Hi your login has been done");
         } else {
+          console.log("Did not get", response.json());
           return response.json();
         }
       })
