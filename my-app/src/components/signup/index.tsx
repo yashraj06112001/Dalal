@@ -23,12 +23,34 @@ const SignUp = () => {
     name: "agentName",
   });
   const onSubmit = (data: formSignUp) => {
-    console.log("Form Submitted Data:", data);
+    console.log(data);
+    fetch("http://localhost:8000/api/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Specify JSON data type
+      },
+      body: JSON.stringify({
+        agentName: data.agentName,
+        agentId: data.agentId,
+        phoneNumber: data.phoneNumber,
+        agentEmail: data.email,
+      }),
+    }).then((response) => {
+      console.log(response.json());
+    });
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
-      <h2 style={{ textAlign: "center" }}>Sign Up</h2>
+    <div
+      style={{
+        maxWidth: "400px",
+        margin: "0 auto",
+        padding: "20px",
+        backgroundColor: "black",
+        width: "500px",
+      }}
+    >
+      <h2 style={{ textAlign: "center", color: "white" }}>Sign Up</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Agent ID */}
         <div style={{ marginBottom: "15px" }}>
@@ -36,7 +58,7 @@ const SignUp = () => {
             htmlFor="agentId"
             style={{ display: "block", marginBottom: "5px" }}
           >
-            Agent ID
+            Agency Name
           </label>
           <input
             id="agentId"
@@ -47,6 +69,7 @@ const SignUp = () => {
               padding: "8px",
               border: "1px solid #ccc",
               borderRadius: "4px",
+              color: "black",
             }}
           />
           {errors.agentId && (
@@ -71,6 +94,7 @@ const SignUp = () => {
               padding: "8px",
               border: "1px solid #ccc",
               borderRadius: "4px",
+              color: "black",
             }}
           />
           {errors.agentName && (
@@ -101,6 +125,7 @@ const SignUp = () => {
               padding: "8px",
               border: "1px solid #ccc",
               borderRadius: "4px",
+              color: "black",
             }}
           />
           {errors.phoneNumber && (
@@ -131,6 +156,7 @@ const SignUp = () => {
               padding: "8px",
               border: "1px solid #ccc",
               borderRadius: "4px",
+              color: "black",
             }}
           />
           {errors.email && (

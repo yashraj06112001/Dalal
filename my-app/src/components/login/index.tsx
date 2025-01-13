@@ -52,8 +52,12 @@ const Login = () => {
   return (
     <>
       <div className="login-container">
-        <form onSubmit={loginController(onSubmit)} className="login-form">
-          <h2>Login</h2>
+        <form
+          onSubmit={loginController(onSubmit)}
+          className="login-form"
+          style={{ backgroundColor: "black", width: "400px" }}
+        >
+          <h2 style={{ color: "white" }}>Login</h2>
 
           <div className="form-group">
             <label htmlFor="customerId">Customer ID</label>
@@ -64,6 +68,7 @@ const Login = () => {
               })}
               placeholder="Enter your Customer ID"
               className={loginError.customerId ? "error" : ""}
+              style={{ color: "black" }}
             />
             {loginError.customerId && (
               <p className="error-message">{loginError.customerId.message}</p>
@@ -80,6 +85,7 @@ const Login = () => {
               })}
               placeholder="Enter your password"
               className={loginError.password ? "error" : ""}
+              style={{ color: "black" }}
             />
             {loginError.password && (
               <p className="error-message">{loginError.password.message}</p>
