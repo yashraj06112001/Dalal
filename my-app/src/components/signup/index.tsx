@@ -22,6 +22,7 @@ const SignUp = () => {
     control,
     name: "agentName",
   });
+  // here is our onSubmit function
   const onSubmit = (data: formSignUp) => {
     console.log(data);
     fetch("http://localhost:8000/api/signup", {
