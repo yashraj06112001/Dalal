@@ -1,11 +1,13 @@
 const connection = require("./databse");
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcrypt");
 
-const signup = router.post("/signup", (req, res) => {
+const signup = router.post("/signup", async (req, res) => {
   //  AGENT_ID	AGENT_NAME	PHONE_NUMBER	AGENT_EMAIL
-  const { agentId, agentName, phoneNumber, agentEmail } = req.body;
-  const sqlQuery = `INSERT INTO agents (AGENT_ID,	AGENT_NAME,	PHONE_NUMBER,	AGENT_EMAIL) VALUES(?,?,?,?)`;
+  const { agentId, agentName, phoneNumber, agentEmail, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const sqlQuery = `INSERT INTO agents (AGENT_ID,	AGENT_NAME,	PHONE_NUMBER,	AGENT_EMAIL,password) VALUES(?,?,?,?,?)`;
   const sqlQuery2 = `SELECT * FROM agents WHERE PHONE_NUMBER=?`;
   connection.query(sqlQuery2, [phoneNumber], (error, results) => {
     if (error) {
@@ -28,7 +30,7 @@ const signup = router.post("/signup", (req, res) => {
       } else {
         connection.query(
           sqlQuery,
-          [agentId, agentName, phoneNumber, agentEmail],
+          [agentId, agentName, phoneNumber, agentEmail, hashedPassword],
           (error, results) => {
             if (error) {
               res.status(500).json({

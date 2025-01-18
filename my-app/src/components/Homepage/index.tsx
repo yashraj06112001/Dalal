@@ -89,7 +89,10 @@ const Homepage = () => {
               >
                 ×
               </button>
-              <SignUp />
+              <SignUp
+                setIsDeactivated={setIsDeactivated}
+                setShowSignUp={setShowSignUp}
+              />
             </div>
           </div>
         )}

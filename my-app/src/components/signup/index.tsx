@@ -1,27 +1,38 @@
 import React from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { notification } from "antd";
 
-const SignUp = () => {
+interface SignUpProps {
+  setIsDeactivated: (value: boolean) => void; // A function that takes a boolean and returns void
+  setShowSignUp: (value: boolean) => void; // A function that takes a boolean and returns void
+}
+
+const SignUp: React.FC<SignUpProps> = ({ setIsDeactivated, setShowSignUp }) => {
   type formSignUp = {
     agentId: string;
     agentName: String;
     phoneNumber: string;
     email: string;
+    password: string;
   };
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
   } = useForm<formSignUp>();
-  const agentID = useWatch({
-    control,
-    name: "agentId",
-  });
-  const agentName = useWatch({
-    control,
-    name: "agentName",
-  });
+
+  const openNotification = (
+    type: "success" | "error" | "info" | "warning",
+    message: string,
+    description: string
+  ) => {
+    notification[type]({
+      message: message,
+      description: description,
+      placement: "topRight", // You can set placement as 'topLeft', 'topRight', 'bottomLeft', or 'bottomRight'
+    });
+  };
+
   const onSubmit = (data: formSignUp) => {
     console.log(data);
     fetch("http://localhost:8000/api/signup", {
@@ -34,10 +45,23 @@ const SignUp = () => {
         agentId: data.agentId,
         phoneNumber: data.phoneNumber,
         agentEmail: data.email,
+        password: data.password,
       }),
     }).then((response) => {
-      console.log(response.json());
+      console.log(response.json(), "the status is - ", response.status);
+      if (response.status === 500) {
+        openNotification(
+          "error",
+          "Not Signed Up",
+          "There is some error may be you are already signed Up"
+        );
+      } else {
+        openNotification("success", "signed Up", "you are now signed up");
+      }
     });
+
+    setIsDeactivated(false);
+    setShowSignUp(false);
   };
 
   return (
@@ -161,6 +185,32 @@ const SignUp = () => {
           />
           {errors.email && (
             <span style={{ color: "red" }}>{errors.email.message}</span>
+          )}
+        </div>
+
+        <div style={{ marginBottom: "15px" }}>
+          <label
+            htmlFor="password"
+            style={{ display: "block", marginBottom: "5px" }}
+          >
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            {...register("password", {
+              required: "Password is required",
+            })}
+            style={{
+              width: "100%",
+              padding: "8px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              color: "black",
+            }}
+          />
+          {errors.password && (
+            <span style={{ color: "red" }}>{errors.password.message}</span>
           )}
         </div>
 
