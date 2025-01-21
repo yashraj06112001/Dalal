@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import React from "react";
 import "@src/components/login/style.css";
 import { useNavigate } from "react-router-dom";
+import { notification } from "antd";
 
 const Login = () => {
   type formLogin = {
@@ -14,6 +15,18 @@ const Login = () => {
     watch: loginWatch,
     formState: { errors: loginError },
   } = useForm<formLogin>();
+
+  const openNotification = (
+    type: "success" | "error" | "info" | "warning",
+    message: string,
+    description: string
+  ) => {
+    notification[type]({
+      message: message,
+      description: description,
+      placement: "topRight", // You can set placement as 'topLeft', 'topRight', 'bottomLeft', or 'bottomRight'
+    });
+  };
 
   const onSubmit = (data: formLogin) => {
     const currentDateTime = new Date().toISOString();
@@ -32,19 +45,34 @@ const Login = () => {
       .then((response) => {
         if (response?.status === 201) {
           console.log("Hi your login has been done");
+          openNotification(
+            "success",
+            "voila Login",
+            "You have finally Login Inside the profile"
+          );
+          response.json();
+        } else if (response?.status === 401) {
+          openNotification("error", "OOPs", "You have put wrong password");
+          return response.json();
+        } else if (response?.status === 404) {
+          openNotification(
+            "error",
+            "OOPs",
+            "No user of such customer Id found"
+          );
+          return response.json();
         } else {
-          console.log("Did not get", response.json());
+          openNotification("error", "OOPs", "Login Failed");
           return response.json();
         }
       })
-      .then((data) => {
-        console.log(
-          "login Not working",
-          data?.status,
-          "and the whole response is - ",
-          data
-        );
+      .then((response) => {
+        console.log("Login successful:", response);
+
+        // Store the token securely
+        localStorage.setItem("authToken", response.jwtToken);
       })
+
       .catch((error) => {
         console.error("error in onSubmit:", error);
       });
