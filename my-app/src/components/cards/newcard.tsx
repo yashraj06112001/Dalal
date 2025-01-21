@@ -1,10 +1,13 @@
-import { Card } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import CardForm from "./form";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Card, Modal, Typography } from "antd";
 
-const ClickableCard = () => {
-  const handlePlusClick = () => {};
+const { Title, Text } = Typography;
+const handlePlusClick = () => {};
+type cardType = {
+  cardName: string;
+  price: string;
+};
+const ClickableCard: React.FC<cardType> = ({ cardName, price }) => {
   return (
     <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
       <Card
@@ -20,7 +23,10 @@ const ClickableCard = () => {
         }}
         onClick={handlePlusClick} // Action on clicking the card
       >
-        <PlusOutlined style={{ fontSize: "48px", color: "#1890ff" }} />
+        <Title level={5} style={{ marginBottom: 8 }}>
+          {cardName}
+        </Title>
+        <Text type="secondary">{price}</Text>
       </Card>
     </div>
   );
