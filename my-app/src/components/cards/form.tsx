@@ -8,6 +8,7 @@ const CardForm = () => {
     description: string;
     video: FileList;
     images: FileList;
+    price: string;
   };
 
   const {
@@ -18,7 +19,7 @@ const CardForm = () => {
 
   const onSubmit = (data: cardForm) => {
     // Handle form submission
-    console.log(data);
+    console.log("This is the card data that you just put up", data);
   };
 
   return (
@@ -61,31 +62,34 @@ const CardForm = () => {
         {/* Price */}
         <div style={{ marginBottom: "15px" }}>
           <label
-            htmlFor="serialNumber"
+            htmlFor="price"
             style={{ display: "block", marginBottom: "5px" }}
           >
             Price
           </label>
-          <input
-            id="serialNumber"
-            type="text"
-            {...register("serialNumber", {
-              required: "Price is required",
-              pattern: {
-                value: /^[0-9]+(\.[0-9]{1,2})?$/,
-                message: "Enter a valid price (e.g., 100 or 100.50)",
-              },
-            })}
-            style={{
-              width: "100%",
-              padding: "8px",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              color: "black",
-            }}
-          />
-          {errors.serialNumber && (
-            <span style={{ color: "red" }}>{errors.serialNumber.message}</span>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <input
+              id="price"
+              type="text"
+              {...register("price", {
+                required: "Price is required",
+                pattern: {
+                  value: /^[0-9]+(\.[0-9]{1,2})?$/,
+                  message: "Enter a valid price (e.g., 100 or 100.50)",
+                },
+              })}
+              style={{
+                width: "calc(100% - 50px)",
+                padding: "8px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                color: "black",
+              }}
+            />
+            <span style={{ marginLeft: "10px", color: "white" }}>Lakhs</span>
+          </div>
+          {errors.price && (
+            <span style={{ color: "red" }}>{errors.price.message}</span>
           )}
         </div>
 
