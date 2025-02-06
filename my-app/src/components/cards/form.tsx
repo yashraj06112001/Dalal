@@ -20,6 +20,15 @@ const CardForm = () => {
   const onSubmit = (data: cardForm) => {
     // Handle form submission
     console.log("This is the card data that you just put up", data);
+    fetch("http://localhost:8000/api/card", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((response) => {
+      console.log(response);
+    });
   };
 
   return (
