@@ -10,7 +10,7 @@ const CardForm = () => {
     images: FileList;
     price: string;
   };
-
+  // creating form for the cards
   const {
     register,
     formState: { errors },
