@@ -37,6 +37,7 @@ const CardForm = () => {
     formState: { errors },
     watch,
     handleSubmit,
+    setValue,
   } = useForm<cardForm>();
 
   const onSubmit = (data: cardForm) => {
@@ -62,6 +63,17 @@ const CardForm = () => {
     });
   };
 
+  const removeImage = (index: number) => {
+    const files = watch("images");
+    if (files && files.length > 0) {
+      const dataTransfer = new DataTransfer();
+      Array.from(files)
+        .filter((_, i) => i !== index) // Remove the selected image
+        .forEach((file) => dataTransfer.items.add(file));
+
+      setValue("images", dataTransfer.files); // Update the input field
+    }
+  };
   return (
     <div
       style={{
@@ -198,7 +210,7 @@ const CardForm = () => {
             type="file"
             accept="video/*"
             {...register("video", { required: "Video upload is required" })}
-            style={{ width: "100%" }}
+            style={{ width: "100%", color: "red" }}
           />
           {errors.video && (
             <span style={{ color: "red" }}>{errors.video.message}</span>
@@ -227,16 +239,52 @@ const CardForm = () => {
           <div>
             {watch("images") &&
               Array.from(watch("images")).map((file: any, index: number) => (
-                <img
-                  key={index}
-                  src={URL.createObjectURL(file)}
-                  alt={`Image ${index + 1}`}
-                  style={{
-                    width: "100px",
-                    height: "100px",
-                    objectFit: "cover",
-                  }}
-                />
+                <>
+                  <div
+                    key={index}
+                    style={{
+                      position: "relative",
+                      display: "inline-block",
+                      width: "100px",
+                      height: "100px",
+                    }}
+                  >
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={`Image ${index + 1}`}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        borderRadius: "5px",
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      style={{
+                        position: "absolute",
+                        top: "5px",
+                        right: "5px",
+                        background: "red",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "20px",
+                        height: "20px",
+                        cursor: "pointer",
+                        fontSize: "14px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "0",
+                        lineHeight: "1",
+                      }}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                </>
               ))}
           </div>
         </div>
