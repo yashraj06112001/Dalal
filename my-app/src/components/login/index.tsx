@@ -50,7 +50,8 @@ const Login = () => {
             "voila Login",
             "You have finally Login Inside the profile"
           );
-          response.json();
+
+          return response.json();
         } else if (response?.status === 401) {
           openNotification("error", "OOPs", "You have put wrong password");
           return response.json();
@@ -71,6 +72,7 @@ const Login = () => {
 
         // Store the token securely
         localStorage.setItem("authToken", response.jwtToken);
+        window.location.href = "/cardForm";
       })
 
       .catch((error) => {
