@@ -1,6 +1,27 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 const CardForm = () => {
+  useEffect(() => {
+    let token = localStorage.getItem("authToken");
+    console.log("This is the token", token);
+    if (!token) {
+      window.location.href = "/login";
+    }
+    fetch("http://localhost:8000/api/verify", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((response) => {
+      if (response.status !== 201) {
+        console.log("nhi chal rha hai JWT");
+        window.location.href = "/login";
+      }
+    });
+  }, []);
+
+  // handling form Now
   type cardForm = {
     serialNumber: string;
     name: string;
@@ -14,18 +35,28 @@ const CardForm = () => {
   const {
     register,
     formState: { errors },
+    watch,
     handleSubmit,
   } = useForm<cardForm>();
 
   const onSubmit = (data: cardForm) => {
+    let formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("color", data.color);
+    formData.append("description", data.description);
+    formData.append("price", data.price);
+    formData.append("video", data.video[0]);
+    for (let i = 0; i < data.images.length; i++) {
+      formData.append("images[]", data.images[i]);
+    }
     // Handle form submission
     console.log("This is the card data that you just put up", data);
     fetch("http://localhost:8000/api/card", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("authToken")}`,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(formData),
     }).then((response) => {
       console.log(response);
     });
@@ -47,7 +78,7 @@ const CardForm = () => {
         <div style={{ marginBottom: "15px" }}>
           <label
             htmlFor="name"
-            style={{ display: "block", marginBottom: "5px" }}
+            style={{ display: "block", marginBottom: "5px", color: "white" }}
           >
             Property Name
           </label>
@@ -72,7 +103,7 @@ const CardForm = () => {
         <div style={{ marginBottom: "15px" }}>
           <label
             htmlFor="price"
-            style={{ display: "block", marginBottom: "5px" }}
+            style={{ display: "block", marginBottom: "5px", color: "white" }}
           >
             Price
           </label>
@@ -106,7 +137,7 @@ const CardForm = () => {
         <div style={{ marginBottom: "15px" }}>
           <label
             htmlFor="color"
-            style={{ display: "block", marginBottom: "5px" }}
+            style={{ display: "block", marginBottom: "5px", color: "white" }}
           >
             Custom Color
           </label>
@@ -131,7 +162,7 @@ const CardForm = () => {
         <div style={{ marginBottom: "15px" }}>
           <label
             htmlFor="description"
-            style={{ display: "block", marginBottom: "5px" }}
+            style={{ display: "block", marginBottom: "5px", color: "white" }}
           >
             Description
           </label>
@@ -142,6 +173,7 @@ const CardForm = () => {
             })}
             style={{
               width: "100%",
+              height: "320px",
               padding: "8px",
               border: "1px solid #ccc",
               borderRadius: "4px",
@@ -157,7 +189,7 @@ const CardForm = () => {
         <div style={{ marginBottom: "15px" }}>
           <label
             htmlFor="video"
-            style={{ display: "block", marginBottom: "5px" }}
+            style={{ display: "block", marginBottom: "5px", color: "white" }}
           >
             Upload Video
           </label>
@@ -177,7 +209,7 @@ const CardForm = () => {
         <div style={{ marginBottom: "15px" }}>
           <label
             htmlFor="images"
-            style={{ display: "block", marginBottom: "5px" }}
+            style={{ display: "block", marginBottom: "5px", color: "white" }}
           >
             Upload Images
           </label>
@@ -187,11 +219,26 @@ const CardForm = () => {
             accept="image/*"
             multiple
             {...register("images", { required: "Image upload is required" })}
-            style={{ width: "100%" }}
+            style={{ width: "100%", color: "red" }}
           />
           {errors.images && (
             <span style={{ color: "red" }}>{errors.images.message}</span>
           )}
+          <div>
+            {watch("images") &&
+              Array.from(watch("images")).map((file: any, index: number) => (
+                <img
+                  key={index}
+                  src={URL.createObjectURL(file)}
+                  alt={`Image ${index + 1}`}
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    objectFit: "cover",
+                  }}
+                />
+              ))}
+          </div>
         </div>
 
         {/* Submit Button */}

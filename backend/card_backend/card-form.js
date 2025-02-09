@@ -6,6 +6,6 @@ const cardUploader = router.post(
   "/card",
   upload.single("video"),
   (req, res) => {
-    const body = req.body;
+    const cardData = req.body;
   }
 );

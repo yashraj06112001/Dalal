@@ -3,7 +3,8 @@ const router = express.Router();
 const connection = require("./databse");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const secretKey = "SECRETKEY";
+require("dotenv").config();
+const secretKey = process.env.secretKey;
 
 const loginRecord = router.post("/login", async (req, res) => {
   try {
