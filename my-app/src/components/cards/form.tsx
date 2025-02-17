@@ -5,20 +5,26 @@ const CardForm = () => {
   useEffect(() => {
     let token = localStorage.getItem("authToken");
     console.log("This is the token", token);
+
     if (!token) {
       window.location.href = "/login";
+      return;
     }
+
     fetch("http://localhost:8000/api/verify", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }).then((response) => {
-      if (response.status !== 201) {
-        console.log("nhi chal rha hai JWT");
-        window.location.href = "/login";
-      }
-    });
+    })
+      .then((response) => {
+        if (response.status !== 200) {
+          // Changed from 201 to 200
+          console.log("JWT verification failed");
+          window.location.href = "/login";
+        }
+      })
+      .catch((err) => console.error("Fetch error:", err));
   }, []);
 
   // handling form Now
@@ -47,19 +53,31 @@ const CardForm = () => {
     formData.append("description", data.description);
     formData.append("price", data.price);
     formData.append("video", data.video[0]);
+
+    // Append images one by one
     for (let i = 0; i < data.images.length; i++) {
-      formData.append("images[]", data.images[i]);
+      formData.append("images", data.images[i]); // Notice "images[]"
     }
     // Handle form submission
     console.log("This is the card data that you just put up", data);
-    fetch("http://localhost:8000/api/card", {
+    fetch("http://localhost:8000/api/card/video", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        name: data.name,
+      },
+      body: formData,
+    }).then((response) => {
+      console.log("This is after fetch  data==>>", response);
+    });
+    fetch("http://localhost:8000/api/card/image", {
       method: "POST",
       headers: {
         authorization: `Bearer ${localStorage.getItem("authToken")}`,
       },
-      body: JSON.stringify(formData),
+      body: formData,
     }).then((response) => {
-      console.log(response);
+      console.log("This is after fetch  data==>>", response);
     });
   };
 
@@ -85,7 +103,7 @@ const CardForm = () => {
       }}
     >
       <h2 style={{ textAlign: "center", color: "white" }}>Create Deal</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
         {/* Property Name */}
         <div style={{ marginBottom: "15px" }}>
           <label
