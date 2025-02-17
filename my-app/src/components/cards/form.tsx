@@ -5,20 +5,26 @@ const CardForm = () => {
   useEffect(() => {
     let token = localStorage.getItem("authToken");
     console.log("This is the token", token);
+
     if (!token) {
       window.location.href = "/login";
+      return;
     }
+
     fetch("http://localhost:8000/api/verify", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }).then((response) => {
-      if (response.status !== 201) {
-        console.log("nhi chal rha hai JWT");
-        window.location.href = "/login";
-      }
-    });
+    })
+      .then((response) => {
+        if (response.status !== 200) {
+          // Changed from 201 to 200
+          console.log("JWT verification failed");
+          window.location.href = "/login";
+        }
+      })
+      .catch((err) => console.error("Fetch error:", err));
   }, []);
 
   // handling form Now
@@ -37,6 +43,7 @@ const CardForm = () => {
     formState: { errors },
     watch,
     handleSubmit,
+    setValue,
   } = useForm<cardForm>();
 
   const onSubmit = (data: cardForm) => {
@@ -46,22 +53,45 @@ const CardForm = () => {
     formData.append("description", data.description);
     formData.append("price", data.price);
     formData.append("video", data.video[0]);
+
+    // Append images one by one
     for (let i = 0; i < data.images.length; i++) {
-      formData.append("images[]", data.images[i]);
+      formData.append("images", data.images[i]); // Notice "images[]"
     }
     // Handle form submission
     console.log("This is the card data that you just put up", data);
-    fetch("http://localhost:8000/api/card", {
+    fetch("http://localhost:8000/api/card/video", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        name: data.name,
+      },
+      body: formData,
+    }).then((response) => {
+      console.log("This is after fetch  data==>>", response);
+    });
+    fetch("http://localhost:8000/api/card/image", {
       method: "POST",
       headers: {
         authorization: `Bearer ${localStorage.getItem("authToken")}`,
       },
-      body: JSON.stringify(formData),
+      body: formData,
     }).then((response) => {
-      console.log(response);
+      console.log("This is after fetch  data==>>", response);
     });
   };
 
+  const removeImage = (index: number) => {
+    const files = watch("images");
+    if (files && files.length > 0) {
+      const dataTransfer = new DataTransfer();
+      Array.from(files)
+        .filter((_, i) => i !== index) // Remove the selected image
+        .forEach((file) => dataTransfer.items.add(file));
+
+      setValue("images", dataTransfer.files); // Update the input field
+    }
+  };
   return (
     <div
       style={{
@@ -73,7 +103,7 @@ const CardForm = () => {
       }}
     >
       <h2 style={{ textAlign: "center", color: "white" }}>Create Deal</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
         {/* Property Name */}
         <div style={{ marginBottom: "15px" }}>
           <label
@@ -198,7 +228,7 @@ const CardForm = () => {
             type="file"
             accept="video/*"
             {...register("video", { required: "Video upload is required" })}
-            style={{ width: "100%" }}
+            style={{ width: "100%", color: "red" }}
           />
           {errors.video && (
             <span style={{ color: "red" }}>{errors.video.message}</span>
@@ -227,16 +257,52 @@ const CardForm = () => {
           <div>
             {watch("images") &&
               Array.from(watch("images")).map((file: any, index: number) => (
-                <img
-                  key={index}
-                  src={URL.createObjectURL(file)}
-                  alt={`Image ${index + 1}`}
-                  style={{
-                    width: "100px",
-                    height: "100px",
-                    objectFit: "cover",
-                  }}
-                />
+                <>
+                  <div
+                    key={index}
+                    style={{
+                      position: "relative",
+                      display: "inline-block",
+                      width: "100px",
+                      height: "100px",
+                    }}
+                  >
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={`Image ${index + 1}`}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        borderRadius: "5px",
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      style={{
+                        position: "absolute",
+                        top: "5px",
+                        right: "5px",
+                        background: "red",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "20px",
+                        height: "20px",
+                        cursor: "pointer",
+                        fontSize: "14px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "0",
+                        lineHeight: "1",
+                      }}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                </>
               ))}
           </div>
         </div>

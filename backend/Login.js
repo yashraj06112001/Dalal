@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const secretKey = process.env.secretKey;
 
-const loginRecord = router.post("/login", async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const { customerId, password, dateAndTime } = req.body;
     // LETS CHECK IS THE PASSWORD RIGHT OR NOT
@@ -72,5 +72,5 @@ const loginRecord = router.post("/login", async (req, res) => {
 });
 
 module.exports = {
-  loginRecord,
+  router,
 };
