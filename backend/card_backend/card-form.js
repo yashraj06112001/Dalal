@@ -11,7 +11,7 @@ router.post("/card/image", async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
   const userId = req.body.name; // Assuming name is the user_id
-
+  // added in the main file
   req.files.forEach((file) => {
     const imageName = file.filename;
     const imageUrl = `image/${imageName}`;
