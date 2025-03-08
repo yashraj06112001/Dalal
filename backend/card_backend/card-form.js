@@ -1,54 +1,74 @@
 const express = require("express");
 const router = express.Router();
-const { uploadVideo, saveImage } = require("./card");
 const connection = require("../databse");
 const multer = require("multer");
+const path = require("path");
 
-router.post("/card/image", async (req, res) => {
-  try {
-    const filenames = await saveImage(req);
-  } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
-  }
-  const userId = req.body.name; // Assuming name is the user_id
+// 🔹 Ensure the "image/" folder exists
+const IMAGE_FOLDER = path.join(__dirname, "../image");
 
-  req.files.forEach((file) => {
-    const imageName = file.filename;
-    const imageUrl = `image/${imageName}`;
-    const query =
-      "INSERT INTO image (user_id, image_name, image_url) VALUES (?, ?, ?)";
-    connection.query(query, [userId, imageName, imageUrl], (err) => {
+// 🟢 Multer Storage Configuration (only handles files, no req.body yet)
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, IMAGE_FOLDER); // Save images inside "image/" folder
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+  },
+});
+
+const upload = multer({ storage }).array("images"); // Accept multiple images
+
+// 🔹 Function to Save Image Data in MySQL
+const saveImages = (userId, files) => {
+  return new Promise((resolve, reject) => {
+    if (!userId || !files || files.length === 0) {
+      return reject("Invalid data");
+    }
+
+    const values = files.map((file, index) => [
+      userId,
+      `image_${index + 1}`, // Image name as image_1, image_2...
+      `image/${file.filename}`, // Image URL path
+    ]);
+
+    const query = "INSERT INTO image (user_id, image_name, image_url) VALUES ?";
+
+    connection.query(query, [values], (err) => {
       if (err) {
         console.error("Database error:", err);
-        return res.json({ success: false, message: "Database error" });
+        return reject("Database error");
       }
+      resolve("Images uploaded successfully");
     });
   });
-  res
-    .status(200)
-    .json({ success: true, message: "Images uploaded successfully" });
-});
+};
 
-router.post("card/video", uploadVideo.single("video"), (req, res) => {
-  // Upload of rest of the things
-  if (!req.file) {
-    return res.status(400).json({ message: "No video uploaded" });
-  }
-  const { name, color, description, price } = req.body;
-  const videoUrl = req.file ? `video/${req.file.filename}` : null; // Ensure video path is correct
-
-  const query2 =
-    "INSERT INTO cards(name, color, description, video, price) VALUES (?, ?, ?, ?, ?)";
-
-  connection.query(
-    query2,
-    [name, color, description, videoUrl, price],
-    (err, results) => {
-      if (err) {
-        return res.status(500).json({ message: "Database error", error: err });
-      }
-      res.status(200).json({ message: "Data uploaded successfully" });
+// 🟢 API to Handle Image Upload
+router.post("/upload/images", (req, res) => {
+  upload(req, res, async (err) => {
+    if (err) {
+      console.error("Multer error:", err);
+      return res
+        .status(500)
+        .json({ success: false, message: "File upload error" });
     }
-  );
+
+    const { user_id } = req.body; // Extract user_id after multer runs
+
+    if (!user_id || !req.files || req.files.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid request" });
+    }
+
+    try {
+      const message = await saveImages(user_id, req.files);
+      res.status(200).json({ success: true, message });
+    } catch (error) {
+      res.status(500).json({ success: false, message: error });
+    }
+  });
 });
+
 module.exports = { router };

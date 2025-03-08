@@ -59,26 +59,15 @@ const CardForm = () => {
       formData.append("images", data.images[i]); // Notice "images[]"
     }
     // Handle form submission
-    console.log("This is the card data that you just put up", data);
-    fetch("http://localhost:8000/api/card/video", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        name: data.name,
-      },
-      body: formData,
-    }).then((response) => {
-      console.log("This is after fetch  data==>>", response);
-    });
-    fetch("http://localhost:8000/api/card/image", {
+    fetch("http//localhost:8000/api//upload/images", {
       method: "POST",
       headers: {
         authorization: `Bearer ${localStorage.getItem("authToken")}`,
       },
       body: formData,
-    }).then((response) => {
-      console.log("This is after fetch  data==>>", response);
-    });
+    })
+      .then((response) => response.json())
+      .then((response) => console.log("Images response is - ", response));
   };
 
   const removeImage = (index: number) => {
