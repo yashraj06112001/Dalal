@@ -52,14 +52,27 @@ const CardForm = () => {
     formData.append("color", data.color);
     formData.append("description", data.description);
     formData.append("price", data.price);
-    formData.append("video", data.video[0]);
+    //formData.append("video", data.video[0]);
 
     // Append images one by one
-    for (let i = 0; i < data.images.length; i++) {
-      formData.append("images", data.images[i]); // Notice "images[]"
-    }
-    // Handle form submission
-    fetch("http//localhost:8000/api//upload/images", {
+    Array.from(data.images).forEach((image) => {
+      formData.append("images", image);
+    });
+    // NEW FORM DATA FOR VIDEO UPLOAD
+    let formDataVideo = new FormData();
+    formDataVideo.append("video", data.video[0]);
+    formDataVideo.append("name", data.name);
+    //NEW FORM DATA  FOR INFO
+    const info = {
+      name: data.name,
+      color: data.color,
+      description: data.description,
+      price: data.price,
+    };
+
+    // Handle Image  form submission
+
+    fetch("http://localhost:8000/api/image", {
       method: "POST",
       headers: {
         authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -68,6 +81,23 @@ const CardForm = () => {
     })
       .then((response) => response.json())
       .then((response) => console.log("Images response is - ", response));
+    // HANDLE VIDEO UPLOAD
+    fetch("http://localhost:8000/api/video", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${localStorage.getItem("authToken")}`,
+      },
+      body: formDataVideo,
+    });
+    // FOR REMAINING INFO THIS IS THE API
+    fetch("http://localhost:8000/api/info", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("authToken")}`,
+      },
+      body: JSON.stringify(info),
+    });
   };
 
   const removeImage = (index: number) => {
