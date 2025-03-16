@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const CardForm = () => {
@@ -26,7 +26,40 @@ const CardForm = () => {
       })
       .catch((err) => console.error("Fetch error:", err));
   }, []);
+  //added new useEffect for getInfo
+  interface cardType {
+    name: string;
+    color: string;
+    price: string;
+  }
+  // getting data for comparing of the name with the already occured name
+  const [totalData, setTotalData] = useState<cardType[]>([]);
+  const [myMap, setMyMap] = useState(new Map());
+  useEffect(() => {
+    fetch("http://localhost:8000/api/getInfo", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((response) => {
+        const data = response.data;
+        console.log("yahan tak to puhucha", data);
+        setTotalData(data);
+      });
+  }, []);
 
+  useEffect(() => {
+    const newMap = new Map();
+    totalData.map((value) => {
+      console.log("this is yash => ", value.name);
+      newMap.set(value.name, 1);
+    });
+    setMyMap(newMap);
+  }, [totalData]);
   // handling form Now
   type cardForm = {
     serialNumber: string;
@@ -37,6 +70,16 @@ const CardForm = () => {
     images: FileList;
     price: string;
   };
+  //variables turned true after completion of image and video upload
+  const [imageFileIsUploaded, setImageFileIsUploaded] = useState(false);
+  const [videoFileIsUploaded, setVideoFileIsUploaded] = useState(false);
+  const [infoFileIsUploaded, setInfoFileIsUploaded] = useState(false);
+
+  useEffect(() => {
+    if (imageFileIsUploaded && videoFileIsUploaded && infoFileIsUploaded) {
+      window.location.href = "/dashboard";
+    }
+  }, [imageFileIsUploaded, videoFileIsUploaded, infoFileIsUploaded]);
 
   const {
     register,
@@ -45,6 +88,18 @@ const CardForm = () => {
     handleSubmit,
     setValue,
   } = useForm<cardForm>();
+  // handling nameError
+  let nameData = watch("name");
+  const [nameError, setNameError] = useState(false);
+  useEffect(() => {
+    let ans = myMap.has(nameData);
+    if (ans == true) {
+      setNameError(true);
+    } else {
+      setNameError(false);
+    }
+    console.log(nameData, nameError);
+  }, [nameData]);
 
   const onSubmit = (data: cardForm) => {
     let formData = new FormData();
@@ -80,7 +135,12 @@ const CardForm = () => {
       body: formData,
     })
       .then((response) => response.json())
-      .then((response) => console.log("Images response is - ", response));
+      .then((response) => {
+        console.log("Images response is - ", response);
+        if (response.success) {
+          setImageFileIsUploaded(true);
+        }
+      });
     // HANDLE VIDEO UPLOAD
     fetch("http://localhost:8000/api/video", {
       method: "POST",
@@ -88,7 +148,15 @@ const CardForm = () => {
         authorization: `Bearer ${localStorage.getItem("authToken")}`,
       },
       body: formDataVideo,
-    });
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          setVideoFileIsUploaded(true);
+        }
+      });
     // FOR REMAINING INFO THIS IS THE API
     fetch("http://localhost:8000/api/info", {
       method: "POST",
@@ -97,7 +165,13 @@ const CardForm = () => {
         authorization: `Bearer ${localStorage.getItem("authToken")}`,
       },
       body: JSON.stringify(info),
-    });
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setInfoFileIsUploaded(true);
+        }
+      });
   };
 
   const removeImage = (index: number) => {
@@ -145,6 +219,9 @@ const CardForm = () => {
           />
           {errors.name && (
             <span style={{ color: "red" }}>{errors.name.message}</span>
+          )}
+          {nameError && (
+            <span style={{ color: "red" }}>The Name already exists</span>
           )}
         </div>
 
@@ -329,6 +406,7 @@ const CardForm = () => {
         {/* Submit Button */}
         <button
           type="submit"
+          disabled={nameError} // Disable button when nameError is true
           style={{
             width: "100%",
             padding: "10px",
@@ -337,6 +415,7 @@ const CardForm = () => {
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
+            opacity: nameError ? 0.6 : 1,
           }}
         >
           Submit

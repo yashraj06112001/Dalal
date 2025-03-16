@@ -4,7 +4,9 @@ import CardForm from "./form";
 import { useState } from "react";
 
 const ClickableCard = () => {
-  const handlePlusClick = () => {};
+  const handlePlusClick = () => {
+    window.location.href = "/cardForm";
+  };
   return (
     <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
       <Card

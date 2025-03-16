@@ -9,6 +9,7 @@ const { router: frontEndVerficationToken } = require("./jwt-token");
 const { router: uploadImage } = require("./card_backend/upload-image");
 const { router: uploadVideo } = require("./card_backend/upload-video");
 const { router: uploadInfo } = require("./card_backend/upload-info");
+const { router: getInfo } = require("./card_backend/get-info");
 app.use(cors());
 app.use(express.json());
 app.use("/api", loginRecord);
@@ -21,6 +22,7 @@ app.use("/api", signup);
 app.use("/api", uploadImage);
 app.use("/api", uploadVideo);
 app.use("/api", uploadInfo);
+app.use("/api", getInfo);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

@@ -72,7 +72,7 @@ const Login = () => {
 
         // Store the token securely
         localStorage.setItem("authToken", response.jwtToken);
-        window.location.href = "/cardForm";
+        window.location.href = "/Dashboard";
       })
 
       .catch((error) => {

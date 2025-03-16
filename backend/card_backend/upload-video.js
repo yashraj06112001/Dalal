@@ -29,7 +29,13 @@ router.post("/video", upload, (req, res) => {
   connection.query(queryToInsert, (error, result) => {
     if (error) {
       res.json({
+        success: false,
         message: "FAILED TO SEND VIDEO TO THE TABLE",
+      });
+    } else {
+      res.json({
+        success: true,
+        message: "video is uploaded",
       });
     }
   });

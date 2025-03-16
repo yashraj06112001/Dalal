@@ -44,9 +44,13 @@ router.post("/image", upload, (req, res) => {
         [imageLocations.map((path) => [path])],
         (insertError) => {
           if (insertError) {
-            return res.json({ message: "Data insertion failed" });
+            return res.json({
+              success: false,
+              message: "Data insertion failed",
+            });
           }
           return res.json({
+            success: true,
             message: "Table created and images inserted successfully",
           });
         }
@@ -54,6 +58,7 @@ router.post("/image", upload, (req, res) => {
     })
     .catch((error) => {
       return res.json({
+        success: false,
         message: "the table is not created OR data is not inserted inside it",
         error: error,
       });

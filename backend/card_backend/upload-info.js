@@ -22,10 +22,12 @@ router.post("/info", (req, res) => {
   connection.query(query, (error, result) => {
     if (error) {
       res.json({
+        success: false,
         message: "This is an error message for info table insertion",
       });
     } else {
       res.json({
+        success: true,
         message: "Info has been added in the cards table of database",
       });
     }
