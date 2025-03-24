@@ -5,24 +5,24 @@ const cors = require("cors");
 const { router: loginRecord } = require("./Login");
 const { signup } = require("./SIgnUp");
 const { router: frontEndVerficationToken } = require("./jwt-token");
-
 const { router: uploadImage } = require("./card_backend/upload-image");
 const { router: uploadVideo } = require("./card_backend/upload-video");
 const { router: uploadInfo } = require("./card_backend/upload-info");
 const { router: getInfo } = require("./card_backend/get-info");
+const { router: getImage } = require("./card_backend/get-image");
 app.use(cors());
 app.use(express.json());
 app.use("/api", loginRecord);
 app.get("/", (req, res) => {
   res.send("Hello, Express!");
 });
-
 app.use("/api", frontEndVerficationToken);
 app.use("/api", signup);
 app.use("/api", uploadImage);
 app.use("/api", uploadVideo);
 app.use("/api", uploadInfo);
 app.use("/api", getInfo);
+app.use("/api", getImage);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

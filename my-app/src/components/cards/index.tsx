@@ -9,6 +9,7 @@ const Dashboard = () => {
     name: string;
     color: string;
     price: string;
+    description: string;
   }
   const [totalData, setTotalData] = useState<cardType[]>([]);
   useEffect(() => {
@@ -23,10 +24,13 @@ const Dashboard = () => {
       })
       .then((response) => {
         let cardArray = response.data;
+        console.log(cardArray);
         setTotalData(cardArray);
       });
   }, []);
-
+  useEffect(() => {
+    console.log("total data is - ", totalData);
+  }, [totalData]);
   return (
     <div className="h-screen flex flex-col">
       {/* Title at the top */}
@@ -50,6 +54,7 @@ const Dashboard = () => {
                   cardName={item.name}
                   price={item.price}
                   color={item.color}
+                  description={item.description}
                 />
               ))
             ) : (

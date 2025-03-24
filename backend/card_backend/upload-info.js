@@ -21,9 +21,11 @@ router.post("/info", (req, res) => {
  ('${name}','${color}','${description}','${price}')`;
   connection.query(query, (error, result) => {
     if (error) {
+      console.log(error);
       res.json({
         success: false,
         message: "This is an error message for info table insertion",
+        error: error,
       });
     } else {
       res.json({

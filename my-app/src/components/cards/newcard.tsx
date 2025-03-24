@@ -1,14 +1,24 @@
 import React, { useState } from "react";
 import { Card, Modal, Typography } from "antd";
-
+import ProductCard from "./info-card";
 const { Title, Text } = Typography;
-const handlePlusClick = () => {};
+
 type cardType = {
   cardName: string;
   price: string;
   color: string;
+  description: string;
 };
-const ClickableCard: React.FC<cardType> = ({ cardName, price, color }) => {
+const ClickableCard: React.FC<cardType> = ({
+  cardName,
+  price,
+  color,
+  description,
+}) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handlePlusClick = () => {
+    setIsModalOpen(true);
+  };
   return (
     <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
       <Card
@@ -32,6 +42,20 @@ const ClickableCard: React.FC<cardType> = ({ cardName, price, color }) => {
           {price}
         </Text>
       </Card>
+      <Modal
+        title={cardName}
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        footer={null}
+        centered
+      >
+        <ProductCard
+          heading={cardName}
+          price={price}
+          color={color}
+          describe={description}
+        />
+      </Modal>
     </div>
   );
 };
