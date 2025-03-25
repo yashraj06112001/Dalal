@@ -48,6 +48,7 @@ const ClickableCard: React.FC<cardType> = ({
         onCancel={() => setIsModalOpen(false)}
         footer={null}
         centered
+        width={800} // Increases width (default is 520px)
       >
         <ProductCard
           heading={cardName}

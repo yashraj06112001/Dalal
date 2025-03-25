@@ -17,7 +17,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   return (
     <div
-      className="max-w-lg mx-auto p-6 rounded-lg shadow-lg border border-gray-200"
+      className="w-[100%] mx-auto p-6 rounded-lg shadow-lg border border-gray-200"
       style={{
         backgroundColor: `${color}33`, // Adds transparency to make it duller (Hex with 20% opacity)
       }}

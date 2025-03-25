@@ -1,3 +1,5 @@
+import { Col } from "antd";
+import { Color } from "antd/es/color-picker";
 import React, { useEffect, useState } from "react";
 
 interface ImageProps {
@@ -30,14 +32,18 @@ const Image: React.FC<ImageProps> = ({ name }) => {
 
   return (
     <div className="p-6">
+      <h1 className="text-xl font-bold text-center mb-4">IMAGE GALLERY</h1>
       {loading ? (
-        <p className="text-center text-gray-500 text-lg">Loading images...</p>
+        <>
+          <h1>IMAGE GALARY</h1>
+          <p className="text-center text-gray-500 text-lg">Loading images...</p>
+        </>
       ) : totalData.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="flex flex-wrap gap-4 justify-center">
           {totalData.map((item) => (
             <div
               key={item.serial_number}
-              className="border border-gray-300 rounded-lg overflow-hidden shadow-md transition-transform transform hover:scale-105"
+              className="border border-gray-300 rounded-lg overflow-hidden shadow-md w-[200px] h-[200px] flex items-center justify-center"
             >
               <img
                 src={`http://localhost:8000/api/imageImport/${item.imageLocation.replace(
@@ -45,7 +51,7 @@ const Image: React.FC<ImageProps> = ({ name }) => {
                   "/"
                 )}`} // Use the backend endpoint
                 alt={`Image ${item.serial_number}`}
-                className="w-full max-w-full max-h-full h-full" // Changed from h-40 object-cover
+                className="w-full h-full object-contain" // Ensures image fits inside 25x25 without cutting or overflowing
                 loading="lazy" // Optional: for lazy loading
               />
             </div>
