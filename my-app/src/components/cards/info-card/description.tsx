@@ -5,7 +5,7 @@ interface description {
 const Description: React.FC<description> = ({ describe }) => {
   return (
     <>
-      <p className="italic font-bold text-lg text-gray-800 border-l-4 border-black pl-4 font-serif">
+      <p className="font-bold text-lg text-gray-800 border-l-4 border-black pl-4 font-serif">
         {describe}
       </p>
     </>

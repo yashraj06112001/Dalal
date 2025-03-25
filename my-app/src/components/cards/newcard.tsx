@@ -43,7 +43,6 @@ const ClickableCard: React.FC<cardType> = ({
         </Text>
       </Card>
       <Modal
-        title={cardName}
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={null}
