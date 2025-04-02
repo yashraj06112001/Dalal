@@ -24,7 +24,7 @@ const Dashboard = () => {
       })
       .then((response) => {
         let cardArray = response.data;
-        console.log(cardArray);
+        console.log("the card Array is = ", cardArray);
         setTotalData(cardArray);
       });
   }, []);
