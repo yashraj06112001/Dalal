@@ -10,6 +10,7 @@ const { router: uploadVideo } = require("./card_backend/upload-video");
 const { router: uploadInfo } = require("./card_backend/upload-info");
 const { router: getInfo } = require("./card_backend/get-info");
 const { router: getImage } = require("./card_backend/get-image");
+const { router: getVideo } = require("./card_backend/get-video");
 app.use(cors());
 app.use(express.json());
 app.use("/api", loginRecord);
@@ -23,6 +24,7 @@ app.use("/api", uploadVideo);
 app.use("/api", uploadInfo);
 app.use("/api", getInfo);
 app.use("/api", getImage);
+app.use("/api", getVideo);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

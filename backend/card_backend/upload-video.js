@@ -2,13 +2,18 @@ const express = require("express");
 const router = new express.Router();
 const multer = require("multer");
 const connection = require("../databse");
+const path = require("path");
 // we have created a storage here
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "./video");
   },
   filename: function (req, file, cb) {
-    let fileName = file.originalname + "_video" + Date.now();
+    let fileName =
+      file.originalname.replace(/\.[^/.]+$/, "") +
+      "_video" +
+      Date.now() +
+      path.extname(file.originalname);
     cb(null, fileName);
   },
 });
